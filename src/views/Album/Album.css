@@ -10,9 +10,9 @@
 
 .album__container ol{
   counter-reset: item;
+  color: rgba(0, 0, 0, 0.65);
   list-style-type: none;
   padding-left: 0;
-  color: rgba(0, 0, 0, 0.65);
 }
 
 .album__container li {

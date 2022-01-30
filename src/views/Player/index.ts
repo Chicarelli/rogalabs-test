@@ -89,7 +89,6 @@ export function PlayerView(){
         }, 500)
       }
     }
-
   })
 
   return html`
