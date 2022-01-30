@@ -78,7 +78,6 @@ export function PlayerView(){
       if(!audioElement) return;
       const currentTime = audioElement?.currentTime;
       const percent = Math.min(10 / duration * currentTime * 10, 100);
-      console.log(percent);
       
       progressBar!.style.width = `${percent}%`;
 
