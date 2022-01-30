@@ -11,6 +11,8 @@ export function PlayerView(){
     const audioElement = document.querySelector<HTMLAudioElement>('#audio_player')
     const previousButton = document.querySelector<HTMLImageElement>('#player_previous-button');
     const nextButton = document.querySelector<HTMLImageElement>('#player_next-button');
+    const progressBar = document.querySelector<HTMLDivElement>('.player__music-progress');
+    let timer: NodeJS.Timeout;
 
     musicState?.addEventListener('click', function() {
       if(player.playing){
@@ -28,7 +30,7 @@ export function PlayerView(){
       } 
     });
 
-    previousButton?.addEventListener('click', function(){
+    previousButton?.addEventListener('click', function() {
       try {
         player.prevTrack();
         audioElement!.src = player.trackUrl ?? '';
@@ -45,6 +47,12 @@ export function PlayerView(){
     audioElement?.addEventListener('ended', () => nextTrack());
 
     nextButton?.addEventListener('click', () => nextTrack());
+
+    audioElement?.addEventListener('playing', function() {
+      makeProgressBar(this.duration);
+    })
+
+    audioElement?.addEventListener('pause', () => clearTimeout(timer));
 
     function nextTrack(){
       try {
@@ -65,6 +73,23 @@ export function PlayerView(){
       const playlistDiv = document.querySelector<HTMLDivElement>(".player_playlist-view");
       playlistDiv!.innerHTML = playlistHtml;
     }
+
+    function makeProgressBar(duration: number) :void{
+      if(!audioElement) return;
+      const currentTime = audioElement?.currentTime;
+      const percent = Math.min(10 / duration * currentTime * 10, 100);
+      console.log(percent);
+      
+      progressBar!.style.width = `${percent}%`;
+
+      if(percent < 100) {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          makeProgressBar(duration);
+        }, 500)
+      }
+    }
+
   })
 
   return html`
@@ -77,10 +102,18 @@ export function PlayerView(){
       
       <audio id="audio_player"></audio>
       
-      <div class="player_control">
-        <img id="player_previous-button" src="/img/prev.svg"/>
-        <img id="player_state-playing" src="/img/play.svg"/>
-        <img id="player_next-button" src="/img/next.svg"/>
+      <div class="player__controllers">
+
+        <div class="player__music-progress_div">
+          <div class="player__music-progress"></div>
+        </div>
+
+        <section class="player_control">
+          <img id="player_previous-button" src="/img/prev.svg"/>
+          <img id="player_state-playing" src="/img/play.svg"/>
+          <img id="player_next-button" src="/img/next.svg"/>
+        </section>
+
       </div>
     </div>
   `;
